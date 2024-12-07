@@ -9,22 +9,18 @@
         :root {
             --primary-color: #4a90e2;
             --secondary-color: #f39c12;
-            --text-color: #333;
             --bg-color: #f5f6fa;
+            --text-color: #2c3e50;
             --section-padding: 4rem 2rem;
         }
 
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
             color: var(--text-color);
-            background: var(--bg-color);
         }
 
         /* 导航栏样式 */
@@ -92,24 +88,86 @@
             margin-bottom: 1rem;
         }
 
-        /* 游戏区域样式 */
+        /* 游戏区域整体样式 */
         .game-section {
             padding: var(--section-padding);
-            background: var(--bg-color);
-            min-height: 80vh;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 20%),
+                linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 90vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%) -40px 0,
+                linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%) -40px 0,
+                linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.05) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.05) 75%);
+            background-size: 80px 80px;
+            z-index: 1;
         }
 
         .game-container {
+            position: relative;
+            z-index: 2;
             width: 90%;
             max-width: 1200px;
             margin: 2rem auto;
             padding: 3rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+                        0 0 100px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3),
+                        0 0 120px rgba(255, 255, 255, 0.15);
+        }
+
+        .section-title {
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 添加动态背景动画 */
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 调整游戏信息区域样式以配合新背景 */
+        .game-info {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .game-info {
@@ -117,42 +175,76 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
+            padding: 1.5rem;
+            background: linear-gradient(to right, #f8f9fa, #ffffff);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .level-info {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: var(--primary-color);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .level-info::before {
+            content: '🎮';
+            font-size: 1.6rem;
         }
 
         .score-info {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: var(--secondary-color);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* Styles for the letter display element which centers bold, large text with added spacing */
+        .score-info::before {
+            content: '🏆';
+            font-size: 1.6rem;
+        }
+
         .letter-display {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: bold;
             margin: 3rem 0;
-            min-height: 120px;
+            min-height: 150px;
             display: flex;
             align-items: center;
             justify-content: center;
-            letter-spacing: 4px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 2rem;
+            letter-spacing: 6px;
+            background: linear-gradient(145deg, #ffffff, #f3f3f3);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .letter-display:empty {
+            background: linear-gradient(145deg, #f3f3f3, #ffffff);
         }
 
         .timer-display {
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin: 2rem 0;
             color: var(--text-color);
             text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .input-section {
@@ -164,29 +256,34 @@
         }
 
         .user-input {
-            padding: 1rem 1.5rem;
-            font-size: 1.5rem;
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
+            padding: 1.2rem 1.8rem;
+            font-size: 1.8rem;
+            border: 2px solid rgba(74, 144, 226, 0.3);
+            border-radius: 15px;
             width: 80%;
             max-width: 600px;
             text-align: center;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .user-input:focus {
             outline: none;
             border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2), 0 4px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
         }
 
         .progress-bar {
-            height: 8px;
-            background: #eee;
-            margin: 1rem 0;
-            border-radius: 4px;
+            height: 10px;
+            background: linear-gradient(to right, #f0f0f0, #e0e0e0);
+            margin: 1.5rem 0;
+            border-radius: 10px;
             overflow: hidden;
             width: 100%;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .progress-bar::after {
@@ -194,28 +291,39 @@
             display: block;
             height: 100%;
             width: var(--progress, 0%);
-            background: var(--primary-color);
-            transition: width 0.3s ease;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            transition: width 0.5s ease;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);
         }
 
         .start-button, .submit-button {
-            padding: 1rem 2rem;
-            font-size: 1.2rem;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.4rem;
             border: none;
-            border-radius: 8px;
-            background: var(--primary-color);
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
         }
 
         .start-button:hover, .submit-button:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, var(--secondary-color), #e67e22);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+        }
+
+        .start-button:active, .submit-button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(243, 156, 18, 0.4);
         }
 
         .submit-button {
-            min-width: 120px;
+            min-width: 140px;
         }
 
         /* 规则区样式 */

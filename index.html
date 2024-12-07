@@ -62,32 +62,6 @@
             margin-bottom: 2rem;
         }
 
-        /* 特性区样式 */
-        .features {
-            padding: var(--section-padding);
-            background: white;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .feature-card {
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .feature-card i {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
         /* 游戏区域整体样式 */
         .game-section {
             padding: var(--section-padding);
@@ -847,6 +821,136 @@
                 margin: 1rem 0;
             }
         }
+
+        /* 提示文本样式 */
+        .instruction-text {
+            font-size: 1.2rem;
+            color: #666;
+            text-align: center;
+            margin: 1rem 0;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease;
+        }
+
+        .instruction-text.highlight {
+            color: #2c3e50;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+        }
+
+        @media screen and (max-width: 768px) {
+            .instruction-text {
+                font-size: 1rem;
+                padding: 0.6rem;
+                margin: 0.8rem 0;
+            }
+        }
+
+        /* 游戏规则样式 */
+        .game-rules {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .rules-content {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .rules-toggle {
+            background: none;
+            border: none;
+            color: #2196F3;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 10px;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rules-toggle:hover {
+            color: #1976D2;
+        }
+
+        .rules-toggle::after {
+            content: '▼';
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .rules-toggle.active::after {
+            transform: rotate(180deg);
+        }
+
+        .rules-section {
+            margin-bottom: 15px;
+        }
+
+        .rules-section h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .rules-section ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .rules-section li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .rules-section li::before {
+            content: '•';
+            color: #2196F3;
+            position: absolute;
+            left: -15px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .game-rules {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+
+        /* 特性区样式 */
+        .features {
+            padding: var(--section-padding);
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .feature-card i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -901,20 +1005,21 @@
     <section id="game" class="game-section">
         <h2 class="section-title" data-translate="playNow">Play Now</h2>
         <div class="game-container">
+            <!-- 原有的游戏内容 -->
             <div class="game-info">
                 <div class="level-info">
-                    <span data-translate="level">Level</span>: <span id="currentLevel">1</span>/20
+                    <span data-translate="level">Level</span>: <span id="currentLevel">1</span>
                 </div>
                 <div class="score-info">
                     <span data-translate="score">Score</span>: <span id="currentScore">0</span>
                 </div>
             </div>
-            <div id="progressBar" class="progress-bar"></div>
             <div id="letterDisplay" class="letter-display"></div>
+            <div id="instructionText" class="instruction-text"></div>
             <div id="timerDisplay" class="timer-display"></div>
             <div id="inputSection" class="input-section">
-                <input type="text" id="userInput" class="user-input">
-                <button id="submitButton" class="submit-button" data-translate="submit">Submit</button>
+                <input type="text" id="userInput" class="user-input" style="display: none;">
+                <button id="submitButton" class="submit-button" data-translate="submit" style="display: none;">Submit</button>
             </div>
             <button id="startButton" class="start-button" data-translate="start">Start</button>
         </div>
@@ -990,6 +1095,17 @@
                 startGame: '开始游戏',
                 level: '关卡',
                 score: '分数',
+                memorizeInstruction: '请记住这些字母：',
+                inputInstruction: '时间到！请输入你记住的字母：',
+                incorrect: '回答错误！',
+                correctAnswer: '正确的序列是：',
+                levelComplete: '回答正确！做得好！',
+                gameOver: '游戏结束！',
+                finalScore: '你的最终得分：',
+                excellent: '太棒了！你的记忆力非常出色！',
+                good: '做得不错！继续练习！',
+                keepTrying: '继续努力提高分数！',
+                startNewGame: '点击开始重新游戏',
                 keyFeatures: '主要特点',
                 features: {
                     multilingual: {
@@ -1008,47 +1124,7 @@
                         title: '移动友好',
                         desc: '响应式设计，随时随地都能玩'
                     }
-                },
-                playNow: '立即开始',
-                gameRules: '游戏规则',
-                scoringSystem: '评分系统',
-                scoringTable: {
-                    performance: '表现',
-                    scoreRange: '分数范围',
-                    rating: '评级',
-                    excellent: '优秀',
-                    good: '良好',
-                    keepTrying: '继续努力'
-                },
-                faq: {
-                    title: '常见问题',
-                    q1: '如何提高我的分数？',
-                    a1: '经常练习并在记忆阶段保持专注。从低级别开始建立信心。',
-                    q2: '字符输入区分大小写吗？',
-                    a2: '不区分大小写。您可以使用大写或小写字母输入答案。',
-                    q3: '可以暂停游戏吗？',
-                    a3: '目前游戏不能暂停。每个关卡必须在时间限制内完成。'
-                },
-                footer: '版权所有',
-                rules: {
-                    title: '游戏规则：',
-                    rule1: '1. 总共20关，前4关每关5秒',
-                    rule2: '2. 从第5关开始，每关增加1秒',
-                    rule3: '3. 从1个字符开始，逐渐增加到20个字符',
-                    rule4: '4. 记住显示的字符，然后在输入框中输入',
-                    rule5: '5. 每关分值递增：第1关5分，第2关10分，以此类推',
-                    rule6: '6. 总分1050分，840分以上为优秀'
-                },
-                start: '开始',
-                submit: '提交',
-                timeLeft: '剩余时间：',
-                seconds: '秒',
-                levelComplete: '关卡完成！',
-                gameOver: '游戏结束！',
-                finalScore: '最终得分：',
-                excellent: '太棒了！',
-                good: '不错！',
-                keepTrying: '继续努力！'
+                }
             },
             en: {
                 title: 'Characters Memory Test',
@@ -1056,11 +1132,22 @@
                 startGame: 'Start Game',
                 level: 'Level',
                 score: 'Score',
+                memorizeInstruction: 'Memorize these letters:',
+                inputInstruction: 'Time\'s up! Now type the letters you remember:',
+                incorrect: 'Incorrect!',
+                correctAnswer: 'The correct sequence was:',
+                levelComplete: 'Correct! Well done!',
+                gameOver: 'Game Over!',
+                finalScore: 'Your final score: ',
+                excellent: 'Excellent! Your memory is outstanding!',
+                good: 'Good job! Keep practicing!',
+                keepTrying: 'Keep trying to improve your score!',
+                startNewGame: 'Click Start to play again',
                 keyFeatures: 'Key Features',
                 features: {
                     multilingual: {
                         title: 'Multilingual Support',
-                        desc: 'Practice in 9 different languages including English, Chinese, Japanese, and more'
+                        desc: 'Practice in multiple languages including English, Chinese, Japanese, and more'
                     },
                     memory: {
                         title: 'Memory Enhancement',
@@ -1074,47 +1161,7 @@
                         title: 'Mobile Friendly',
                         desc: 'Play anywhere on any device with responsive design'
                     }
-                },
-                playNow: 'Play Now',
-                gameRules: 'Game Rules',
-                scoringSystem: 'Scoring System',
-                scoringTable: {
-                    performance: 'Performance',
-                    scoreRange: 'Score Range',
-                    rating: 'Rating',
-                    excellent: 'Excellent',
-                    good: 'Good',
-                    keepTrying: 'Keep Trying'
-                },
-                faq: {
-                    title: 'Frequently Asked Questions',
-                    q1: 'How can I improve my score?',
-                    a1: 'Practice regularly and try to maintain focus during the memorization phase. Start with lower levels to build confidence.',
-                    q2: 'Why are the characters case-sensitive?',
-                    a2: 'The game is not case-sensitive. You can type your answer in either uppercase or lowercase.',
-                    q3: 'Can I pause the game?',
-                    a3: 'Currently, the game cannot be paused. Each level must be completed within the time limit.'
-                },
-                footer: 'All rights reserved',
-                rules: {
-                    title: 'Game Rules:',
-                    rule1: '1. Total 20 levels, first 4 levels are 5 seconds each',
-                    rule2: '2. From level 5, time increases by 1 second per level',
-                    rule3: '3. Starting with 1 character, increasing to 20 characters',
-                    rule4: '4. Remember and type the characters in order',
-                    rule5: '5. Points increase per level: Level 1 = 5 points, Level 2 = 10 points, etc.',
-                    rule6: '6. Total 1050 points, 840+ points is excellent'
-                },
-                start: 'Start',
-                submit: 'Submit',
-                timeLeft: 'Time Left: ',
-                seconds: 'seconds',
-                levelComplete: 'Level Complete!',
-                gameOver: 'Game Over!',
-                finalScore: 'Final Score: ',
-                excellent: 'Excellent!',
-                good: 'Good!',
-                keepTrying: 'Keep Trying!'
+                }
             },
             ja: {
                 title: '文字記憶テスト',
@@ -1122,6 +1169,17 @@
                 startGame: 'ゲーム開始',
                 level: 'レベル',
                 score: 'スコア',
+                memorizeInstruction: 'これらの文字を覚えてください：',
+                inputInstruction: '時間が来た！覚えた文字を入力してください：',
+                incorrect: '不正解！',
+                correctAnswer: '正解の順序は：',
+                levelComplete: '正解！よくできました！',
+                gameOver: 'ゲームオーバー！',
+                finalScore: 'あなたの最終スコア：',
+                excellent: 'すごい！あなたの記憶力はすごい！',
+                good: 'よくできました！練習を続けてください！',
+                keepTrying: 'スコアを上げるために頑張ってください！',
+                startNewGame: 'ゲームを再開するにはスタートをクリックしてください',
                 keyFeatures: '主な特徴',
                 features: {
                     multilingual: {
@@ -1140,47 +1198,7 @@
                         title: 'モバイル対応',
                         desc: 'レスポンシブデザインでどこでもプレイ可能'
                     }
-                },
-                playNow: '今すぐプレイ',
-                gameRules: 'ゲームルール',
-                scoringSystem: 'スコアシステム',
-                scoringTable: {
-                    performance: '成績',
-                    scoreRange: 'スコア範囲',
-                    rating: '評価',
-                    excellent: '優秀',
-                    good: '良好',
-                    keepTrying: '頑張りましょう'
-                },
-                faq: {
-                    title: 'よくある質問',
-                    q1: 'スコアを上げるにはどうすればいいですか？',
-                    a1: '定期的に練習し、記憶フェーズに集中してください。低レベルから始めて自信をつけましょう。',
-                    q2: '文字入力は大文字小文字を区別しますか？',
-                    a2: '大文字小文字は区別しません。どちらで入力しても構いません。',
-                    q3: 'ゲームを一時停止できますか？',
-                    a3: '現在、一時停止機能はありません。各レベルは制限時間内に完了する必要があります。'
-                },
-                footer: '全著作権所有',
-                rules: {
-                    title: 'ゲームルール：',
-                    rule1: '1. 全20レベル、最初の4レベルは各5秒',
-                    rule2: '2. レベル5以降、1レベルごとに1秒追加',
-                    rule3: '3. 1文字から始まり、20文字まで増加',
-                    rule4: '4. 表示された文字を覚えて入力',
-                    rule5: '5. レベルごとに点数増加：レベル1=5点、レベル2=10点など',
-                    rule6: '6. 総得点1050点、840点以上で優秀'
-                },
-                start: 'スタート',
-                submit: '送信',
-                timeLeft: '残り時間：',
-                seconds: '秒',
-                levelComplete: 'レベルクリア！',
-                gameOver: 'ゲームオーバー！',
-                finalScore: '最終スコア：',
-                excellent: '素晴らしい！',
-                good: '良好！',
-                keepTrying: '頑張って！'
+                }
             },
             ru: {
                 title: 'Тест на запоминание символов',
@@ -1188,6 +1206,17 @@
                 startGame: 'Начать игру',
                 level: 'Уровень',
                 score: 'Счет',
+                memorizeInstruction: 'Запомните эти буквы:',
+                inputInstruction: 'Время вышло! Теперь введите буквы, которые вы помните:',
+                incorrect: 'Неправильно!',
+                correctAnswer: 'Правильный порядок был:',
+                levelComplete: 'Правильно! Хорошо сделано!',
+                gameOver: 'Игра окончена!',
+                finalScore: 'Ваш окончательный счет:',
+                excellent: 'Отлично! Ваша память просто отличная!',
+                good: 'Хорошая работа! Продолжайте тренироваться!',
+                keepTrying: 'Продолжайте стараться улучшить свой счет!',
+                startNewGame: 'Нажмите Старт, чтобы начать игру заново',
                 keyFeatures: 'Основные особенности',
                 features: {
                     multilingual: {
@@ -1206,47 +1235,7 @@
                         title: 'Мобильность',
                         desc: 'Адаптивный дизайн для игры в любом месте'
                     }
-                },
-                playNow: 'Играть сейчас',
-                gameRules: 'Правила игры',
-                scoringSystem: 'Система оценок',
-                scoringTable: {
-                    performance: 'Результат',
-                    scoreRange: 'Диапазон очков',
-                    rating: 'Оценка',
-                    excellent: 'Отлично',
-                    good: 'Хорошо',
-                    keepTrying: 'Продолжайте стараться'
-                },
-                faq: {
-                    title: 'Частые вопросы',
-                    q1: 'Как улучшить свой результат?',
-                    a1: 'Регулярно тренируйтесь и сохраняйте концентрацию во время запоминания. Начните с низких уровней для уверенности.',
-                    q2: 'Учитывается ли регистр символов?',
-                    a2: 'Нет, регистр не имеет значения. Можно вводить ответ в любом регистре.',
-                    q3: 'Можно ли поставить игру на паузу?',
-                    a3: 'В настоящее время пауза недоступна. Каждый уровень должен быть завершен в отведенное время.'
-                },
-                footer: 'Все права защищены',
-                rules: {
-                    title: 'Правила игры:',
-                    rule1: '1. Всего 20 уровней, первые 4 уровня по 5 секунд',
-                    rule2: '2. С 5 уровня время увеличивается на 1 секунду',
-                    rule3: '3. Начиная с 1 символа, увеличение до 20 символов',
-                    rule4: '4. Запомните и введите показанные символы',
-                    rule5: '5. Очки увеличиваются с каждым уровнем: Уровень 1 = 5 очков, Уровень 2 = 10 очков, etc.',
-                    rule6: '6. Всего 1050 очков, 840+ очков - отлично'
-                },
-                start: 'Старт',
-                submit: 'Отправить',
-                timeLeft: 'Осталось времени: ',
-                seconds: 'секунд',
-                levelComplete: 'Уровень пройден!',
-                gameOver: 'Игра окончена!',
-                finalScore: 'Итоговый счет: ',
-                excellent: 'Отлично!',
-                good: 'Хорошо!',
-                keepTrying: 'Продолжайте стараться!'
+                }
             },
             fr: {
                 title: 'Test de Mémoire des Caractères',
@@ -1254,6 +1243,17 @@
                 startGame: 'Commencer',
                 level: 'Niveau',
                 score: 'Score',
+                memorizeInstruction: 'Mémorisez ces lettres :',
+                inputInstruction: 'Le temps est écoulé ! Entrez maintenant les lettres que vous avez mémorisées :',
+                incorrect: 'Incorrect !',
+                correctAnswer: 'La séquence correcte était :',
+                levelComplete: 'Correct ! Bien joué !',
+                gameOver: 'Fin de la partie !',
+                finalScore: 'Votre score final : ',
+                excellent: 'Excellent ! Votre mémoire est exceptionnelle !',
+                good: 'Bien joué ! Continuez à pratiquer !',
+                keepTrying: 'Continuez à essayer d\'améliorer votre score !',
+                startNewGame: 'Cliquez sur Démarrer pour recommencer',
                 keyFeatures: 'Caractéristiques principales',
                 features: {
                     multilingual: {
@@ -1270,144 +1270,104 @@
                     },
                     mobile: {
                         title: 'Compatible mobile',
-                        desc: 'Design adaptatif pour jouer n\'importe où'
+                        desc: 'Jouez partout sur n\'importe quel appareil avec un design réactif'
                     }
-                },
-                playNow: 'Jouer maintenant',
-                gameRules: 'Règles du jeu',
-                scoringSystem: 'Système de score',
-                scoringTable: {
-                    performance: 'Performance',
-                    scoreRange: 'Plage de score',
-                    rating: 'Évaluation',
-                    excellent: 'Excellent',
-                    good: 'Bien',
-                    keepTrying: 'Continuez d\'essayer'
-                },
-                faq: {
-                    title: 'Questions fréquentes',
-                    q1: 'Comment améliorer mon score ?',
-                    a1: 'Pratiquez régulièrement et restez concentré pendant la phase de mémorisation. Commencez par les niveaux inférieurs pour gagner en confiance.',
-                    q2: 'La saisie des caractères est-elle sensible à la casse ?',
-                    a2: 'Non, vous pouvez saisir votre réponse en majuscules ou en minuscules.',
-                    q3: 'Puis-je mettre le jeu en pause ?',
-                    a3: 'Actuellement, le jeu ne peut pas être mis en pause. Chaque niveau doit être terminé dans le temps imparti.'
-                },
-                footer: 'Tous droits réservés',
-                rules: {
-                    title: 'Règles du jeu :',
-                    rule1: '1. Au total 20 niveaux, les 4 premiers niveaux sont de 5 secondes chacun',
-                    rule2: '2. À partir du niveau 5, le temps augmente de 1 seconde',
-                    rule3: '3. En commençant par 1 caractère, augmentation jusqu\'à 20 caractères',
-                    rule4: '4. Mémorisez et tapez les caractères affichés',
-                    rule5: '5. Les points augmentent par niveau : Niveau 1 = 5 points, Niveau 2 = 10 points, etc.',
-                    rule6: '6. Au total 1050 points, 840+ points - excellent'
-                },
-                start: 'Démarrer',
-                submit: 'Soumettre',
-                timeLeft: 'Temps restant : ',
-                seconds: 'secondes',
-                levelComplete: 'Niveau terminé !',
-                gameOver: 'Partie terminée !',
-                finalScore: 'Score final : ',
-                excellent: 'Excellent !',
-                good: 'Bien !',
-                keepTrying: 'Continuez d\'essayer !'
+                }
             }
         };
+
+        // ... rest of the code remains the same ...
 
         class MemoryGame {
             constructor() {
                 this.currentLevel = 1;
-                this.maxLevel = 20;
-                this.score = 0;
+                this.currentScore = 0;
                 this.currentSequence = '';
-                this.gameStarted = false;
-                this.timer = null;
+                this.timerInterval = null;
                 this.timeLeft = 0;
 
-                // DOM元素
+                // DOM 元素
                 this.letterDisplay = document.getElementById('letterDisplay');
                 this.timerDisplay = document.getElementById('timerDisplay');
                 this.userInput = document.getElementById('userInput');
-                this.startButton = document.getElementById('startButton');
                 this.submitButton = document.getElementById('submitButton');
                 this.inputSection = document.getElementById('inputSection');
-                this.progressBar = document.getElementById('progressBar');
                 this.currentLevelDisplay = document.getElementById('currentLevel');
                 this.currentScoreDisplay = document.getElementById('currentScore');
+                this.instructionText = document.getElementById('instructionText');
+                this.startButton = document.getElementById('startButton');
 
                 // 初始状态
                 this.inputSection.style.display = 'none';
-                this.timerDisplay.style.display = 'none';
+                this.timerDisplay.textContent = '';
                 this.updateGameInfo();
 
-                this.initializeEventListeners();
-            }
-
-            updateGameInfo() {
-                this.currentLevelDisplay.textContent = this.currentLevel;
-                this.currentScoreDisplay.textContent = this.score;
-                this.progressBar.style.setProperty('--progress', `${(this.currentLevel - 1) * 5}%`);
-            }
-
-            startGame() {
-                this.currentLevel = 1;
-                this.score = 0;
-                this.updateGameInfo();
-                this.startLevel();
+                // 绑定事件处理器
+                this.startButton.addEventListener('click', () => this.startLevel());
+                this.submitButton.addEventListener('click', () => this.checkAnswer());
+                this.userInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.checkAnswer();
+                    }
+                });
             }
 
             startLevel() {
-                // 生成当前级别的字符序列
-                this.currentSequence = this.generateSequence(this.currentLevel);
-                
-                // 显示字符
+                this.resetGame();
+                this.generateSequence();
                 this.letterDisplay.textContent = this.currentSequence;
-                
-                // 设置计时器
-                this.timeLeft = this.currentLevel <= 4 ? 5 : this.currentLevel + 1;
-                this.updateTimer();
-                
-                // 隐藏开始按钮，显示计时器
+                this.instructionText.textContent = translations[currentLanguage].memorizeInstruction;
+                this.instructionText.classList.add('highlight');
+                this.startTimer();
                 this.startButton.style.display = 'none';
-                this.timerDisplay.style.display = 'block';
-                
-                // 开始倒计时
-                this.timer = setInterval(() => {
+            }
+
+            resetGame() {
+                this.letterDisplay.textContent = '';
+                this.instructionText.textContent = '';
+                this.userInput.style.display = 'none';
+                this.submitButton.style.display = 'none';
+                this.userInput.value = '';
+                this.instructionText.classList.remove('highlight');
+                clearInterval(this.timerInterval);
+            }
+
+            generateSequence() {
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                this.currentSequence = '';
+                for (let i = 0; i < this.currentLevel; i++) {
+                    this.currentSequence += characters.charAt(Math.floor(Math.random() * characters.length));
+                }
+            }
+
+            startTimer() {
+                this.timeLeft = this.calculateTimeForLevel();
+                this.updateTimer();
+                this.timerInterval = setInterval(() => {
                     this.timeLeft--;
                     this.updateTimer();
-                    
                     if (this.timeLeft <= 0) {
-                        clearInterval(this.timer);
+                        clearInterval(this.timerInterval);
                         this.showInputPhase();
                     }
                 }, 1000);
-
-                // 更新进度条
-                this.progressBar.style.setProperty('--progress', `${(this.currentLevel - 1) * 5}%`);
             }
 
-            generateSequence(length) {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                let result = '';
-                for (let i = 0; i < length; i++) {
-                    result += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                return result;
+            calculateTimeForLevel() {
+                return this.currentLevel <= 4 ? 5 : 5 + (this.currentLevel - 4);
             }
 
             updateTimer() {
-                const currentLang = document.getElementById('languageSelector').value;
-                const timeLeftText = this.getTranslation(currentLang, 'timeLeft');
-                const secondsText = this.getTranslation(currentLang, 'seconds');
-                this.timerDisplay.textContent = `${timeLeftText} ${this.timeLeft} ${secondsText}`;
+                if (this.timeLeft > 0) {
+                    this.timerDisplay.textContent = this.timeLeft;
+                } else {
+                    this.timerDisplay.textContent = '';
+                }
             }
 
             showInputPhase() {
-                // 隐藏字符显示，显示输入框
                 this.letterDisplay.textContent = '';
-                this.timerDisplay.style.display = 'none';
+                this.instructionText.textContent = translations[currentLanguage].inputInstruction;
                 this.inputSection.style.display = 'flex';
                 this.userInput.style.display = 'block';
                 this.submitButton.style.display = 'block';
@@ -1417,117 +1377,103 @@
 
             checkAnswer() {
                 const userAnswer = this.userInput.value.toUpperCase();
-                
                 if (userAnswer === this.currentSequence) {
-                    // 计算当前关卡分数
-                    const levelScore = this.currentLevel * 5;
-                    this.score += levelScore;
-                    this.updateGameInfo();
-                    
-                    // 显示成功消息
-                    const currentLang = document.getElementById('languageSelector').value;
-                    if (this.currentLevel === this.maxLevel) {
-                        this.endGame();
-                    } else {
-                        this.letterDisplay.textContent = this.getTranslation(currentLang, 'levelComplete');
-                        this.currentLevel++;
-                        this.updateGameInfo();
-                        
-                        // 准备下一关
-                        setTimeout(() => {
-                            this.userInput.style.display = 'none';
-                            this.submitButton.style.display = 'none';
-                            this.startLevel();
-                        }, 1500);
-                    }
+                    this.handleCorrectAnswer();
+                } else {
+                    this.handleIncorrectAnswer();
+                }
+            }
+
+            handleCorrectAnswer() {
+                this.currentScore += this.calculateLevelScore();
+                this.currentLevel++;
+                this.updateGameInfo();
+
+                this.letterDisplay.textContent = translations[currentLanguage].levelComplete;
+                this.letterDisplay.style.color = '#4CAF50';
+                
+                if (this.currentLevel <= 20) {
+                    setTimeout(() => {
+                        this.letterDisplay.style.color = '';
+                        this.startLevel();
+                    }, 1000);
                 } else {
                     this.endGame();
                 }
+            }
+
+            handleIncorrectAnswer() {
+                this.letterDisplay.textContent = `${translations[currentLanguage].incorrect}\n${translations[currentLanguage].correctAnswer} ${this.currentSequence}`;
+                this.letterDisplay.style.color = '#f44336';
+                
+                setTimeout(() => {
+                    this.endGame();
+                }, 2000);
+            }
+
+            calculateLevelScore() {
+                return this.currentLevel * 5;
+            }
+
+            updateGameInfo() {
+                this.currentLevelDisplay.textContent = this.currentLevel;
+                this.currentScoreDisplay.textContent = this.currentScore;
             }
 
             endGame() {
-                const currentLang = document.getElementById('languageSelector').value;
-                
-                // 清理游戏状态
-                clearInterval(this.timer);
-                this.inputSection.style.display = 'none';
-                
-                // 显示最终结果
-                let message = `${this.getTranslation(currentLang, 'gameOver')}\n`;
-                message += `${this.getTranslation(currentLang, 'finalScore')}: ${this.score}`;
-                
-                if (this.score >= 840) {
-                    message += `\n${this.getTranslation(currentLang, 'excellent')}`;
-                } else if (this.score >= 630) {
-                    message += `\n${this.getTranslation(currentLang, 'good')}`;
+                const finalScore = this.currentScore;
+                let message = translations[currentLanguage].gameOver + '\n' +
+                             translations[currentLanguage].finalScore + finalScore;
+
+                if (finalScore >= 840) {
+                    message += '\n\n' + translations[currentLanguage].excellent;
+                    this.letterDisplay.style.color = '#4CAF50';
+                } else if (finalScore >= 630) {
+                    message += '\n\n' + translations[currentLanguage].good;
+                    this.letterDisplay.style.color = '#2196F3';
                 } else {
-                    message += `\n${this.getTranslation(currentLang, 'keepTrying')}`;
+                    message += '\n\n' + translations[currentLanguage].keepTrying;
+                    this.letterDisplay.style.color = '#FF9800';
                 }
-                
+
                 this.letterDisplay.textContent = message;
+                this.currentLevel = 1;
+                this.currentScore = 0;
+                this.updateGameInfo();
                 
-                // 显示开始按钮以重新开始
                 this.startButton.style.display = 'block';
-            }
-
-            initializeEventListeners() {
-                // 语言切换监听器
-                document.getElementById('languageSelector').addEventListener('change', () => {
-                    this.updateUIText();
-                });
-
-                // 游戏控制监听器
-                this.startButton.addEventListener('click', () => this.startGame());
-                this.submitButton.addEventListener('click', () => this.checkAnswer());
-                this.userInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        this.checkAnswer();
-                    }
-                });
-            }
-
-            updateUIText() {
-                const currentLang = document.getElementById('languageSelector').value;
+                this.inputSection.style.display = 'none';
+                this.timerDisplay.textContent = '';
+                this.instructionText.textContent = translations[currentLanguage].startNewGame;
+                this.instructionText.classList.add('highlight');
                 
-                // 更新所有带有data-translate属性的元素
-                document.querySelectorAll('[data-translate]').forEach(element => {
-                    const key = element.getAttribute('data-translate');
-                    const translation = this.getTranslation(currentLang, key);
-                    if (translation) {
-                        if (element.tagName.toLowerCase() === 'input' && element.type === 'submit') {
-                            element.value = translation;
-                        } else {
-                            element.textContent = translation;
-                        }
-                    }
-                });
-
-                // 如果游戏已结束，重新显示结束信息
-                if (this.letterDisplay.textContent.includes('Game Over') || 
-                    this.letterDisplay.textContent.includes('游戏结束') ||
-                    this.letterDisplay.textContent.includes('ゲームオーバー') ||
-                    this.letterDisplay.textContent.includes('Игра окончена') ||
-                    this.letterDisplay.textContent.includes('Partie terminée')) {
-                    this.endGame();
-                }
-            }
-
-            getTranslation(lang, key) {
-                const keys = key.split('.');
-                let translation = translations[lang];
-                for (const k of keys) {
-                    if (translation && translation[k]) {
-                        translation = translation[k];
-                    } else {
-                        return null;
-                    }
-                }
-                return translation;
+                this.userInput.value = '';
+                this.userInput.style.display = 'none';
+                this.submitButton.style.display = 'none';
             }
         }
 
-        // 初始化游戏
-        const game = new MemoryGame();
+        // 初始化游戏实例
+        let game;
+        let currentLanguage = 'en';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            game = new MemoryGame();
+            updateLanguage();
+            document.getElementById('languageSelector').addEventListener('change', updateLanguage);
+        });
+
+        // 语言切换功能
+        function updateLanguage() {
+            currentLanguage = document.getElementById('languageSelector').value;
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                const translation = translations[currentLanguage][key];
+                if (translation) {
+                    element.textContent = translation;
+                }
+            });
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Challenge your memory with Characters Memory Test - a multilingual cognitive game supporting 9 languages. Test and improve your memory skills through 20 exciting levels.">
+    <meta name="keywords" content="Characters Memory Test, Memory Game, Cognitive Training, Brain Training, Multilingual Game, Memory Skills">
+    <title>Characters Memory Test - Multilingual Memory Training Game</title>
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #6C63FF;
+            --accent-color: #FF6B6B;
+            --text-color: #2C3E50;
+            --light-bg: #F8FAFC;
+            --dark-bg: #1A202C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--light-bg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .language-selector {
+            margin: 1rem 0;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+        }
+
+        section {
+            padding: 4rem 0;
+        }
+
+        section:nth-child(even) {
+            background: white;
+        }
+
+        .game-container {
+            margin: 2rem auto;
+            max-width: 800px;
+            height: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .scoring-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .scoring-table th,
+        .scoring-table td {
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        .scoring-table th {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        footer {
+            background: var(--dark-bg);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .game-container {
+                height: 500px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <select id="languageSelector" class="language-selector">
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+                <option value="de">Deutsch</option>
+                <option value="ru">Русский</option>
+                <option value="ar">العربية</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1 data-translate="title">Characters Memory Test</h1>
+                <p data-translate="subtitle">Challenge Your Memory in 9 Different Languages</p>
+            </div>
+        </section>
+
+        <section id="game">
+            <div class="container">
+                <h2 data-translate="playNow">Play Now</h2>
+                <div class="game-container">
+                    <iframe src="https://charactersmemorytest.online/game.html" title="Characters Memory Test Game"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="container">
+                <h2 data-translate="aboutTitle">About Characters Memory Test</h2>
+                <p data-translate="aboutDesc">Characters Memory Test is an innovative cognitive training game designed to enhance your memory skills while exposing you to different writing systems from around the world. Whether you're a language enthusiast or simply looking to improve your memory, this game offers an engaging and challenging experience.</p>
+            </div>
+        </section>
+
+        <section id="howToPlay">
+            <div class="container">
+                <h2 data-translate="howToPlayTitle">How to Play</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3 data-translate="step1Title">1. Choose Your Language</h3>
+                        <p data-translate="step1Desc">Select from 9 different languages: Chinese, English, Japanese, Korean, French, Spanish, German, Russian, and Arabic.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-translate="step2Title">2. Memorize Characters</h3>
+                        <p data-translate="step2Desc">Watch carefully as characters appear on screen. The sequence gets longer as you progress through levels.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-translate="step3Title">3. Reproduce the Sequence</h3>
+                        <p data-translate="step3Desc">Type the characters in the exact order you saw them. Accuracy is key!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gameRules">
+            <div class="container">
+                <h2 data-translate="rulesTitle">Game Rules</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3 data-translate="levelsTitle">20 Challenging Levels</h3>
+                        <p data-translate="levelsDesc">Progress through 20 levels of increasing difficulty. Each level adds more characters to remember.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-translate="timeTitle">Time Management</h3>
+                        <p data-translate="timeDesc">First 4 levels give you 5 seconds. Each subsequent level adds 1 second for memorization.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-translate="accuracyTitle">Perfect Accuracy</h3>
+                        <p data-translate="accuracyDesc">Enter the exact sequence to advance. One mistake, and you'll need to retry the level.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scoring">
+            <div class="container">
+                <h2 data-translate="scoringTitle">Scoring System</h2>
+                <table class="scoring-table">
+                    <thead>
+                        <tr>
+                            <th data-translate="performanceLevel">Performance Level</th>
+                            <th data-translate="scoreRange">Score Range</th>
+                            <th data-translate="achievement">Achievement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-translate="excellent">Excellent</td>
+                            <td>840+ points</td>
+                            <td data-translate="excellentDesc">Master of Memory</td>
+                        </tr>
+                        <tr>
+                            <td data-translate="good">Good</td>
+                            <td>630-839 points</td>
+                            <td data-translate="goodDesc">Advanced Memory Skills</td>
+                        </tr>
+                        <tr>
+                            <td data-translate="keepTrying">Keep Trying</td>
+                            <td>Below 630 points</td>
+                            <td data-translate="keepTryingDesc">Room for Improvement</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="benefits">
+            <div class="container">
+                <h2 data-translate="benefitsTitle">Benefits of Playing</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3 data-translate="benefit1Title">Cognitive Enhancement</h3>
+                        <p data-translate="benefit1Desc">Improve short-term memory and concentration skills.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-translate="benefit2Title">Language Exposure</h3>
+                        <p data-translate="benefit2Desc">Familiarize yourself with different writing systems.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-translate="benefit3Title">Brain Training</h3>
+                        <p data-translate="benefit3Desc">Regular practice can enhance overall cognitive performance.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p data-translate="copyright">© 2024 Characters Memory Test. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Characters Memory Test",
+                subtitle: "Challenge Your Memory in 9 Different Languages",
+                // Add more translations as needed
+            },
+            zh: {
+                title: "字符记忆测试",
+                subtitle: "用9种不同语言挑战你的记忆力",
+                // Add more translations as needed
+            }
+            // Add more languages as needed
+        };
+
+        function updateLanguage(lang) {
+            const elements = document.querySelectorAll('[data-translate]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            document.documentElement.lang = lang;
+        }
+
+        document.getElementById('languageSelector').addEventListener('change', (e) => {
+            updateLanguage(e.target.value);
+        });
+    </script>
+</body>
+</html>

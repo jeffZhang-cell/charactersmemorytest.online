@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Characters Memory Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+        }
+
+        #languageSelector {
+            padding: 8px 12px;
+            font-size: 16px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            background-color: white;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #languageSelector:hover {
+            border-color: #2980b9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 10px;
+            background: rgba(236, 240, 241, 0.5);
+            border-radius: 12px;
+        }
+
+        .level {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .level.current {
+            background-color: #3498db;
+            transform: scale(1.1);
+        }
+
+        .level.correct {
+            background-color: #2ecc71;
+        }
+
+        .level.wrong {
+            background-color: #e74c3c;
+        }
+
+        .game-rules {
+            flex: 0 0 auto;
+            background: rgba(236, 240, 241, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+
+        .game-rules h2 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .game-rules p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        .game-section {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            min-height: 200px;
+        }
+
+        .letter-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 3px;
+            min-height: 1.2em;
+        }
+
+        .timer {
+            font-size: 1.2em;
+            color: #e74c3c;
+            font-weight: bold;
+            min-height: 1.5em;
+        }
+
+        .button-container {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+
+        .game-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .input-section {
+            display: none;
+            width: 100%;
+            text-align: center;
+        }
+
+        .input-section input {
+            padding: 12px 20px;
+            font-size: 18px;
+            width: 250px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .input-section input:focus {
+            outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .input-section.countdown {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.98);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        #startButton {
+            background-color: #3498db;
+            color: white;
+        }
+
+        #startButton:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        #submitButton {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        #submitButton:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        #endButton {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        #endButton:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .final-score {
+            font-size: 28px;
+            color: #2c3e50;
+            text-align: center;
+            line-height: 1.6;
+            padding: 20px;
+            background: rgba(236, 240, 241, 0.5);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        @media (max-height: 600px) {
+            .container {
+                height: 85vh;
+                margin-top: 30px;
+                padding: 10px;
+            }
+
+            .game-rules {
+                font-size: 0.8em;
+                padding: 10px;
+            }
+
+            .letter-display {
+                font-size: 2em;
+            }
+
+            .game-section {
+                min-height: 150px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .input-section input {
+                width: 200px;
+                font-size: 16px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-selector">
+        <select id="languageSelector">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+            <option value="ru">Русский</option>
+            <option value="ar">العربية</option>
+        </select>
+    </div>
+    <div class="container">
+        <div class="progress-bar">
+            <!-- 20个关卡进度格子将由JS动态生成 -->
+        </div>
+        <div class="game-rules">
+            <h2 id="gameRulesTitle">游戏规则：</h2>
+            <p id="rule1">1. 游戏共有20关，前4关每关限时5秒</p>
+            <p id="rule2">2. 从第5关开始，每关增加1秒倒计时</p>
+            <p id="rule3">3. 从1个字符开始，逐渐增加到20个字符</p>
+            <p id="rule4">4. 记住显示的字符，然后在输入框中输入</p>
+            <p id="rule5">5. 每关分值递增：第1关5分，第2关10分，以此类推</p>
+            <p id="rule6">6. 总分1050分，840分以上为优秀</p>
+        </div>
+        <div class="game-section">
+            <div class="letter-display"></div>
+            <div class="timer"></div>
+            <div class="final-score" style="display: none;"></div>
+        </div>
+        <div class="button-container">
+            <div class="game-controls">
+                <button id="startButton">开始游戏</button>
+                <div class="input-section">
+                    <input type="text" id="userInput" maxlength="20" autocomplete="off">
+                    <button id="submitButton">提交答案</button>
+                </div>
+                <button id="endButton" style="display: block; background-color: #ff4444;">结束游戏</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            zh: {
+                title: '字符记忆力测试',
+                rules: {
+                    title: '游戏规则：',
+                    rule1: '1. 游戏共有20关，前4关每关限时5秒',
+                    rule2: '2. 从第5关开始，每关增加1秒倒计时',
+                    rule3: '3. 从1个字符开始，逐渐增加到20个字符',
+                    rule4: '4. 记住显示的字符，然后在输入框中输入',
+                    rule5: '5. 每关分值递增：第1关5分，第2关10分，以此类推',
+                    rule6: '6. 总分1050分，840分以上为优秀'
+                },
+                startButton: '开始游戏',
+                endButton: '结束游戏',
+                restartButton: '再玩一次',
+                submitButton: '提交答案',
+                inputPlaceholder: '请输入你记住的字符',
+                timeRemaining: '剩余时间：',
+                seconds: '秒',
+                gameOver: '游戏结束！',
+                totalScore: '你的总分：',
+                evaluation: {
+                    superb: '超级优秀！',
+                    excellent: '优秀！',
+                    good: '良好！',
+                    keepTrying: '继续加油！'
+                }
+            },
+            en: {
+                title: 'Characters Memory Test',
+                rules: {
+                    title: 'Game Rules:',
+                    rule1: '1. 20 levels in total, first 4 levels have 5 seconds each',
+                    rule2: '2. From level 5, each level adds 1 second',
+                    rule3: '3. Starting from 1 character up to 20 characters',
+                    rule4: '4. Memorize the characters and input them',
+                    rule5: '5. Scores increase: Level 1 = 5 points, Level 2 = 10 points, etc.',
+                    rule6: '6. Total 1050 points, excellent above 840 points'
+                },
+                startButton: 'Start Game',
+                endButton: 'End Game',
+                restartButton: 'Play Again',
+                submitButton: 'Submit',
+                inputPlaceholder: 'Enter the characters you remembered',
+                timeRemaining: 'Time remaining: ',
+                seconds: 'seconds',
+                gameOver: 'Game Over!',
+                totalScore: 'Your total score: ',
+                evaluation: {
+                    superb: 'Superb!',
+                    excellent: 'Excellent!',
+                    good: 'Good!',
+                    keepTrying: 'Keep trying!'
+                }
+            },
+            ja: {
+                title: '文字記憶テスト',
+                rules: {
+                    title: 'ゲームルール：',
+                    rule1: '1. 全20レベル、最初の4レベルは各5秒',
+                    rule2: '2. レベル5から、各レベル1秒ずつ増加',
+                    rule3: '3. 1文字から始まり、20文字まで増加',
+                    rule4: '4. 表示された文字を覚えて、入力してください',
+                    rule5: '5. レベルごとに得点増加：レベル1は5点、レベル2は10点など',
+                    rule6: '6. 総得点1050点、840点以上は優秀'
+                },
+                startButton: 'ゲーム開始',
+                endButton: 'ゲーム終了',
+                restartButton: 'もう一度',
+                submitButton: '回答する',
+                inputPlaceholder: '覚えた文字を入力してください',
+                timeRemaining: '残り時間：',
+                seconds: '秒',
+                gameOver: 'ゲーム終了！',
+                totalScore: '合計スコア：',
+                evaluation: {
+                    superb: '素晴らしい！',
+                    excellent: '優秀！',
+                    good: '良好！',
+                    keepTrying: 'がんばって！'
+                }
+            },
+            ko: {
+                title: '글자 기억력 테스트',
+                rules: {
+                    title: '게임 규칙:',
+                    rule1: '1. 총 20레벨, 처음 4레벨은 각 5초',
+                    rule2: '2. 5레벨부터 각 레벨마다 1초씩 증가',
+                    rule3: '3. 1글자에서 시작하여 20글자까지 증가',
+                    rule4: '4. 보여지는 글자를 기억하고 입력하세요',
+                    rule5: '5. 레벨당 점수 증가: 1레벨 5점, 2레벨 10점 등',
+                    rule6: '6. 총점 1050점, 840점 이상이 우수'
+                },
+                startButton: '게임 시작',
+                endButton: '게임 종료',
+                restartButton: '다시 하기',
+                submitButton: '제출',
+                inputPlaceholder: '기억한 글자를 입력하세요',
+                timeRemaining: '남은 시간: ',
+                seconds: '초',
+                gameOver: '게임 종료!',
+                totalScore: '총점: ',
+                evaluation: {
+                    superb: '최고입니다!',
+                    excellent: '우수합니다!',
+                    good: '양호합니다!',
+                    keepTrying: '계속 노력하세요!'
+                }
+            },
+            fr: {
+                title: 'Test de Mémoire des Caractères',
+                rules: {
+                    title: 'Règles du Jeu :',
+                    rule1: '1. 20 niveaux au total, 5 secondes pour les 4 premiers niveaux',
+                    rule2: '2. À partir du niveau 5, +1 seconde par niveau',
+                    rule3: '3. Commence par 1 caractère, augmente progressivement jusqu\'à 20',
+                    rule4: '4. Mémorisez les caractères affichés, puis tapez-les',
+                    rule5: '5. Points croissants par niveau : Niveau 1 = 5 points, Niveau 2 = 10 points, etc.',
+                    rule6: '6. Total 1050 points, excellent au-dessus de 840'
+                },
+                startButton: 'Commencer',
+                endButton: 'Terminer',
+                restartButton: 'Rejouer',
+                submitButton: 'Valider',
+                inputPlaceholder: 'Entrez les caractères mémorisés',
+                timeRemaining: 'Temps restant : ',
+                seconds: 'secondes',
+                gameOver: 'Partie terminée !',
+                totalScore: 'Score total : ',
+                evaluation: {
+                    superb: 'Excellent !',
+                    excellent: 'Très bien !',
+                    good: 'Bien !',
+                    keepTrying: 'Continuez à essayer !'
+                }
+            },
+            es: {
+                title: 'Prueba de Memoria de Caracteres',
+                rules: {
+                    title: 'Reglas del Juego:',
+                    rule1: '1. 20 niveles en total, 5 segundos para los primeros 4 niveles',
+                    rule2: '2. Desde el nivel 5, +1 segundo por nivel',
+                    rule3: '3. Comienza con 1 carácter, aumenta gradualmente hasta 20',
+                    rule4: '4. Memoriza los caracteres mostrados, luego escríbelos',
+                    rule5: '5. Puntos incrementales por nivel: Nivel 1 = 5 puntos, Nivel 2 = 10 puntos, etc.',
+                    rule6: '6. Total 1050 puntos, excelente por encima de 840'
+                },
+                startButton: 'Comenzar',
+                endButton: 'Terminar',
+                restartButton: 'Volver a jugar',
+                submitButton: 'Enviar',
+                inputPlaceholder: 'Ingrese los caracteres que recuerde',
+                timeRemaining: 'Tiempo restante: ',
+                seconds: 'segundos',
+                gameOver: 'Juego terminado !',
+                totalScore: 'Puntuación total: ',
+                evaluation: {
+                    superb: '¡Excelente!',
+                    excellent: '¡Muy bien!',
+                    good: '¡Bien!',
+                    keepTrying: '¡Siga intentándolo!'
+                }
+            },
+            de: {
+                title: 'Buchstaben-Gedächtnistest',
+                rules: {
+                    title: 'Spielregeln:',
+                    rule1: '1. Insgesamt 20 Level, erste 4 Level je 5 Sekunden',
+                    rule2: '2. Ab Level 5 +1 Sekunde pro Level',
+                    rule3: '3. Beginnt mit 1 Buchstabe, steigt schrittweise auf 20',
+                    rule4: '4. Merke dir die angezeigten Buchstaben und gib sie ein',
+                    rule5: '5. Steigende Punkte pro Level: Level 1 = 5 Punkte, Level 2 = 10 Punkte, usw.',
+                    rule6: '6. Insgesamt 1050 Punkte, ausgezeichnet über 840'
+                },
+                startButton: 'Spiel Starten',
+                endButton: 'Beenden',
+                restartButton: 'Nochmal spielen',
+                submitButton: 'Eingabe',
+                inputPlaceholder: 'Gib die gemerkten Buchstaben ein',
+                timeRemaining: 'Verbleibende Zeit: ',
+                seconds: 'Sekunden',
+                gameOver: 'Spiel beendet !',
+                totalScore: 'Gesamtpunktzahl: ',
+                evaluation: {
+                    superb: 'Ausgezeichnet!',
+                    excellent: 'Sehr gut!',
+                    good: 'Gut!',
+                    keepTrying: 'Weiter üben!'
+                }
+            },
+            ru: {
+                title: 'Тест на Запоминание Символов',
+                rules: {
+                    title: 'Правила Игры:',
+                    rule1: '1. Всего 20 уровней, первые 4 уровня по 5 секунд',
+                    rule2: '2. С 5 уровня +1 секунда на уровень',
+                    rule3: '3. Начинается с 1 символа, постепенно увеличивается до 20',
+                    rule4: '4. Запомните показанные символы, затем введите их',
+                    rule5: '5. Возрастающие очки за уровень: Уровень 1 = 5 очков, Уровень 2 = 10 очков и т.д.',
+                    rule6: '6. Всего 1050 очков, отлично выше 840'
+                },
+                startButton: 'Начать Игру',
+                endButton: 'Завершить',
+                restartButton: 'Играть еще раз',
+                submitButton: 'Отправить',
+                inputPlaceholder: 'Введите запомненные символы',
+                timeRemaining: 'Время, оставшееся: ',
+                seconds: 'секунд',
+                gameOver: 'Игра окончена !',
+                totalScore: 'Общий счет: ',
+                evaluation: {
+                    superb: 'Отлично!',
+                    excellent: 'Превосходно!',
+                    good: 'Хорошо!',
+                    keepTrying: 'Продолжайте пытаться!'
+                }
+            },
+            ar: {
+                title: 'اختبار ذاكرة الأحرف',
+                rules: {
+                    title: 'قواعد اللعبة:',
+                    rule1: '١. ٢٠ مستوى في المجموع، المستويات الأربعة الأولى ٥ ثوان لكل منها',
+                    rule2: '٢. من المستوى ٥، تزداد ثانية واحدة لكل مستوى',
+                    rule3: '٣. تبدأ بحرف واحد، وتزداد تدريجياً إلى ٢٠ حرفاً',
+                    rule4: '٤. تذكر الأحرف المعروضة، ثم اكتبها',
+                    rule5: '٥. زيادة النقاط لكل مستوى: المستوى ١ = ٥ نقاط، المستوى ٢ = ١٠ نقاط، إلخ',
+                    rule6: '٦. مجموع النقاط ١٠٥٠، ممتاز فوق ٨٤٠'
+                },
+                startButton: 'ابدأ اللعبة',
+                endButton: 'إنهاء',
+                restartButton: 'لعب مرة أخرى',
+                submitButton: 'إرسال',
+                inputPlaceholder: 'أدخل الأحرف التي تتذكرها',
+                timeRemaining: 'الوقت المتبقي: ',
+                seconds: 'ثواني',
+                gameOver: 'انتهت اللعبة !',
+                totalScore: 'النتيجة الكلية: ',
+                evaluation: {
+                    superb: 'ممتاز!',
+                    excellent: 'جيد جدا!',
+                    good: 'جيد!',
+                    keepTrying: 'استمر في المحاولة!'
+                }
+            }
+        };
+
+        class MemoryGame {
+            constructor() {
+                this.currentLanguage = 'zh';
+                this.maxLevel = 20;
+                this.currentLevel = 0;
+                this.score = 0;
+                this.letters = '';
+                this.timerInterval = null;
+                
+                // DOM elements
+                this.progressBar = document.querySelector('.progress-bar');
+                this.gameRules = document.querySelector('.game-rules');
+                this.letterDisplay = document.querySelector('.letter-display');
+                this.timerElement = document.querySelector('.timer');
+                this.inputSection = document.querySelector('.input-section');
+                this.userInput = document.querySelector('input[type="text"]');
+                this.startButton = document.getElementById('startButton');
+                this.submitButton = document.getElementById('submitButton');
+                this.endButton = document.getElementById('endButton');
+                this.finalScore = document.querySelector('.final-score');
+                this.languageSelector = document.getElementById('languageSelector');
+                
+                // Initialize game
+                this.initProgressBar();
+                this.initEventListeners();
+                this.updateUIText();
+            }
+
+            initEventListeners() {
+                this.startButton.addEventListener('click', () => this.startGame());
+                this.submitButton.addEventListener('click', () => this.checkAnswer());
+                this.endButton.addEventListener('click', () => this.endGameEarly());
+                this.userInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.checkAnswer();
+                    }
+                });
+                
+                // 添加语言切换事件监听
+                this.languageSelector.addEventListener('change', (e) => {
+                    this.currentLanguage = e.target.value;
+                    this.updateUIText();
+                });
+            }
+
+            updateUIText() {
+                const t = translations[this.currentLanguage];
+
+                // 更新总分显示（如果显示着的话）
+if (this.finalScore.style.display === 'block') {
+    this.finalScore.textContent = `${t.totalScore}${this.score}\n${this.score >= 840 ? t.evaluation.excellent : this.score >= 630 ? t.evaluation.good : t.evaluation.keepTrying}`;
+}
+                
+                // 更新游戏规则
+                document.querySelector('.game-rules h2').textContent = t.rules.title;
+                const rules = document.querySelectorAll('.game-rules p');
+                rules[0].textContent = t.rules.rule1;
+                rules[1].textContent = t.rules.rule2;
+                rules[2].textContent = t.rules.rule3;
+                rules[3].textContent = t.rules.rule4;
+                rules[4].textContent = t.rules.rule5;
+                rules[5].textContent = t.rules.rule6;
+                
+                // 更新按钮文本
+                this.startButton.textContent = t.startButton;
+                this.submitButton.textContent = t.submitButton;
+                this.endButton.textContent = t.endButton;
+                
+                // 更新输入框占位符
+                this.userInput.placeholder = t.inputPlaceholder;
+                
+                // 更新总分显示（如果显示着的话）
+                if (this.finalScore.style.display === 'block') {
+                    let evaluation = '';
+                    if (this.score >= 840) {
+                        evaluation = t.evaluation.excellent;
+                    } else if (this.score >= 630) {
+                        evaluation = t.evaluation.good;
+                    } else {
+                        evaluation = t.evaluation.keepTrying;
+                    }
+                    this.finalScore.textContent = `${t.totalScore}${this.score}\n${evaluation}`;
+                }
+            }
+
+            endGame() {
+                const t = translations[this.currentLanguage];
+                this.letterDisplay.textContent = '';
+                this.timerElement.textContent = '';
+                this.inputSection.style.display = 'none';
+                
+                // 显示最终得分和评价
+                let evaluation = '';
+                if (this.score >= 840) {
+                    evaluation = t.evaluation.excellent;
+                } else if (this.score >= 630) {
+                    evaluation = t.evaluation.good;
+                } else {
+                    evaluation = t.evaluation.keepTrying;
+                }
+                
+                this.finalScore.textContent = `${t.totalScore}${this.score}\n${evaluation}`;
+                this.finalScore.style.display = 'block';
+                this.gameRules.style.display = 'block';
+                
+                // 更新开始按钮文本为"再玩一次"并显示
+                this.startButton.textContent = t.restartButton;
+                this.startButton.style.display = 'block';
+                this.endButton.style.display = 'block';
+            }
+
+            endGameEarly() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+                
+                // 显示得分信息
+                const t = translations[this.currentLanguage];
+                let evaluation = '';
+                if (this.score >= 840) {
+                    evaluation = t.evaluation.excellent;
+                } else if (this.score >= 630) {
+                    evaluation = t.evaluation.good;
+                } else {
+                    evaluation = t.evaluation.keepTrying;
+                }
+                
+                this.finalScore.textContent = `${t.totalScore}${this.score}\n${evaluation}`;
+                this.finalScore.style.display = 'block';
+                
+                // 重置游戏状态
+                this.currentLevel = 0;
+                this.letters = '';
+                
+                // 清空显示
+                this.letterDisplay.textContent = '';
+                this.timerElement.textContent = '';
+                this.inputSection.style.display = 'none';
+                
+                // 重置进度条
+                const levels = this.progressBar.children;
+                for (let i = 0; i < levels.length; i++) {
+                    levels[i].className = 'level';
+                }
+                
+                // 显示主页面元素
+                this.startButton.style.display = 'block';
+                this.startButton.textContent = t.restartButton;
+                this.endButton.style.display = 'block';
+                this.gameRules.style.display = 'block';
+            }
+
+            initProgressBar() {
+                for (let i = 0; i < this.maxLevel; i++) {
+                    const level = document.createElement('div');
+                    level.className = 'level';
+                    this.progressBar.appendChild(level);
+                }
+            }
+
+            generateLetters(length) {
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += characters.charAt(Math.floor(Math.random() * characters.length));
+                }
+                return result;
+            }
+
+            startTimer() {
+                // 计算当前关卡的倒计时时间
+                this.timeLeft = this.currentLevel >= 4 ? 5 + (this.currentLevel - 3) : 5;
+                const t = translations[this.currentLanguage];
+                this.timerElement.textContent = `${t.timeRemaining}${this.timeLeft}${t.seconds}`;
+                
+                // 显示输入框，但保持字母显示，并禁用输入框和提交按钮
+                this.inputSection.style.display = 'block';
+                this.inputSection.classList.add('countdown');
+                this.userInput.value = '';
+                
+                // 禁用输入框和提交按钮，但保持结束游戏按钮可用
+                this.userInput.disabled = true;
+                this.userInput.style.opacity = '0.5';
+                this.userInput.style.cursor = 'not-allowed';
+                this.userInput.style.backgroundColor = '#f5f5f5';
+                
+                this.submitButton.disabled = true;
+                this.submitButton.style.opacity = '0.5';
+                this.submitButton.style.cursor = 'not-allowed';
+
+                // 确保结束游戏按钮可用
+                this.endButton.disabled = false;
+                this.endButton.style.opacity = '1';
+                this.endButton.style.cursor = 'pointer';
+                this.endButton.style.display = 'block';
+
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    this.timerElement.textContent = `${t.timeRemaining}${this.timeLeft}${t.seconds}`;
+
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        this.showInputSection();
+                    }
+                }, 1000);
+            }
+
+            showInputSection() {
+                this.letterDisplay.textContent = '';
+                this.timerElement.textContent = '';
+                this.inputSection.classList.remove('countdown');
+                this.inputSection.style.display = 'block';
+                
+                // 启用输入框和提交按钮
+                this.userInput.disabled = false;
+                this.userInput.style.opacity = '1';
+                this.userInput.style.cursor = 'text';
+                this.userInput.style.backgroundColor = 'white';
+                this.userInput.focus();
+                
+                this.submitButton.disabled = false;
+                this.submitButton.style.opacity = '1';
+                this.submitButton.style.cursor = 'pointer';
+            }
+
+            startGame() {
+                this.currentLevel = 0;
+                this.score = 0;
+                this.startLevel();
+                this.startButton.style.display = 'none';
+                this.endButton.style.display = 'block';
+                this.gameRules.style.display = 'none';
+                this.finalScore.style.display = 'none';
+            }
+
+            startLevel() {
+                this.userInput.value = '';
+                this.inputSection.style.display = 'none';
+                this.letters = this.generateLetters(this.currentLevel + 1);
+                this.letterDisplay.textContent = this.letters;
+                this.startTimer();
+            }
+
+            checkAnswer() {
+                // 如果还在倒计时，清除计时器
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.letterDisplay.textContent = '';
+                    this.timerElement.textContent = '';
+                }
+                
+                const userAnswer = this.userInput.value.toUpperCase();
+                const levelScore = (this.currentLevel + 1) * 5;
+                const isCorrect = userAnswer === this.letters;
+                
+                // 更新进度条
+                const levelElement = this.progressBar.children[this.currentLevel];
+                levelElement.className = isCorrect ? 'level correct' : 'level wrong';
+                
+                if (isCorrect) {
+                    this.score += levelScore;
+                }
+                
+                this.currentLevel++;
+                this.inputSection.classList.remove('countdown');
+                
+                if (this.currentLevel < this.maxLevel) {
+                    setTimeout(() => this.startLevel(), 500);
+                } else {
+                    this.endButton.style.display = 'block';
+                    this.endGame();
+                }
+            }
+        }
+
+        // 初始化游戏
+        const game = new MemoryGame();
+    </script>
+</body>
+</html>

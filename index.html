@@ -1466,13 +1466,57 @@
         // 语言切换功能
         function updateLanguage() {
             currentLanguage = document.getElementById('languageSelector').value;
+            
+            // 更新所有带有 data-translate 属性的元素
             document.querySelectorAll('[data-translate]').forEach(element => {
                 const key = element.getAttribute('data-translate');
-                const translation = translations[currentLanguage][key];
+                let translation;
+
+                // 处理嵌套的翻译键，比如 "features.multilingual.title"
+                if (key.includes('.')) {
+                    translation = key.split('.').reduce((obj, k) => obj && obj[k], translations[currentLanguage]);
+                } else {
+                    translation = translations[currentLanguage][key];
+                }
+
                 if (translation) {
                     element.textContent = translation;
                 }
             });
+
+            // 如果游戏正在进行中，更新游戏相关的文本
+            if (game) {
+                // 更新指导文本
+                if (game.instructionText.textContent) {
+                    if (game.userInput.style.display === 'block') {
+                        game.instructionText.textContent = translations[currentLanguage].inputInstruction;
+                    } else if (game.letterDisplay.textContent && !game.letterDisplay.textContent.includes('\n')) {
+                        game.instructionText.textContent = translations[currentLanguage].memorizeInstruction;
+                    }
+                }
+
+                // 更新游戏结束或错误提示
+                if (game.letterDisplay.textContent.includes('\n')) {
+                    if (game.letterDisplay.style.color === '#f44336') {
+                        // 错误提示
+                        game.letterDisplay.textContent = `${translations[currentLanguage].incorrect}\n${translations[currentLanguage].correctAnswer} ${game.currentSequence}`;
+                    } else {
+                        // 游戏结束提示
+                        const finalScore = game.currentScore;
+                        let message = translations[currentLanguage].gameOver + '\n' +
+                                    translations[currentLanguage].finalScore + finalScore;
+
+                        if (finalScore >= 840) {
+                            message += '\n\n' + translations[currentLanguage].excellent;
+                        } else if (finalScore >= 630) {
+                            message += '\n\n' + translations[currentLanguage].good;
+                        } else {
+                            message += '\n\n' + translations[currentLanguage].keepTrying;
+                        }
+                        game.letterDisplay.textContent = message;
+                    }
+                }
+            }
         }
     </script>
 </body>
